@@ -5,6 +5,7 @@ import { Button, Input, TextArea } from "../components/ui/Forms.jsx";
 import { Modal } from "../components/ui/Modal.jsx";
 import { GuideItem } from "../features/guides/GuideItem.jsx";
 import { AssignmentItem } from "../features/assignments/AssignmentItem.jsx";
+import { TermItem } from "../features/terms/TermItem.jsx";
 import { LessonCard } from "../features/lessons/LessonCard.jsx";
 import { isHttpUrl, isLikelyEmail } from "../utils/validators.js";
 import { MODULES, getGuidesByModule, getAssignmentsByModule, getTestsByModule, getToolsByModule, getModuleOpenDate, getLessonsByModule } from "../config/modules.js";
@@ -128,6 +129,25 @@ export default function App() {
               </div>
             </div>
           )}
+        </section>
+
+        <section id="terms" className="space-y-3">
+          <SectionHeading>Ключевые термины</SectionHeading>
+          <Card className="space-y-4">
+            <TermItem title="Искусственный интеллект (ИИ)" desc="Общий термин для систем, выполняющих интеллектуальные задачи." />
+            <DividerSolid />
+            <TermItem title="Промпт" desc="Текстовая инструкция/запрос для модели, задающая задачу и формат ответа." />
+            <DividerSolid />
+            <TermItem title="Генерация кода" desc="Использование ИИ для синтеза исходного кода по описанию." />
+            <DividerSolid />
+            <TermItem title="Веб‑приложение" desc="Приложение, работающее в браузере и доступное по URL." />
+            <DividerSolid />
+            <TermItem title="Пользовательский интерфейс (UI)" desc="Визуальная часть приложения: элементы, кнопки, формы, тексты." />
+            <DividerSolid />
+            <TermItem title="No‑code (Без кода)" desc="Подход/инструменты для сборки приложений без ручного программирования." />
+            <DividerSolid />
+            <TermItem title="API (Application Programming Interface)" desc="Программный интерфейс для интеграции и обмена данными между системами." />
+          </Card>
         </section>
 
         <section id="tools" className="space-y-3">
