@@ -152,4 +152,27 @@ export function getToolsByModule(moduleKey) {
   return [];
 }
 
+export function getLessonsByModule(moduleKey) {
+  if (moduleKey === "basics") {
+    return [
+      { title: "Введение", time: "3 мин", desc: "О курсе и формате." },
+      { title: "Интерфейс", time: "4 мин", desc: "Обзор приложения и основных разделов." },
+      { title: "Промпты 101", time: "6 мин", desc: "Базовые принципы составления подсказок." },
+      { title: "Чек‑лист качества", time: "5 мин", desc: "Критерии оценки ответа и улучшения." },
+      { title: "Сбор данных", time: "4 мин", desc: "От источников к чистым данным." },
+      { title: "Экспорт результатов", time: "3 мин", desc: "Markdown/CSV и шэринг." },
+    ];
+  }
+  if (moduleKey === "prompts") {
+    return [
+      { title: "Шаблоны", time: "5 мин", desc: "Структура подсказок и роль." },
+      { title: "A/B тест", time: "4 мин", desc: "Как сравнивать подсказки честно." },
+    ];
+  }
+  return [
+    { title: "Импорт", time: "5 мин", desc: "Поддерживаемые форматы и индексация." },
+    { title: "Поиск", time: "4 мин", desc: "Фильтры и релевантность." },
+  ];
+}
+
 

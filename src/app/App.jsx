@@ -5,8 +5,9 @@ import { Button, Input, TextArea } from "../components/ui/Forms.jsx";
 import { Modal } from "../components/ui/Modal.jsx";
 import { GuideItem } from "../features/guides/GuideItem.jsx";
 import { AssignmentItem } from "../features/assignments/AssignmentItem.jsx";
+import { LessonCard } from "../features/lessons/LessonCard.jsx";
 import { isHttpUrl, isLikelyEmail } from "../utils/validators.js";
-import { MODULES, getGuidesByModule, getAssignmentsByModule, getTestsByModule, getToolsByModule, getModuleOpenDate } from "../config/modules.js";
+import { MODULES, getGuidesByModule, getAssignmentsByModule, getTestsByModule, getToolsByModule, getModuleOpenDate, getLessonsByModule } from "../config/modules.js";
 
 export default function App() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -23,6 +24,9 @@ export default function App() {
   const [hwLink, setHwLink] = useState("");
   const [hwNote, setHwNote] = useState("");
   const [hwError, setHwError] = useState(null);
+
+  const [lessonOpen, setLessonOpen] = useState(false);
+  const [activeLesson, setActiveLesson] = useState(null);
 
   function subscribe(e) {
     e.preventDefault();
@@ -59,6 +63,8 @@ export default function App() {
 
   const assignmentItems = useMemo(() => getAssignmentsByModule(moduleKey), [moduleKey]);
 
+  const lessons = useMemo(() => getLessonsByModule(moduleKey), [moduleKey]);
+
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 font-mono">
 
@@ -66,6 +72,8 @@ export default function App() {
         <div className="max-w-4xl mx-auto px-6 sm:px-8 py-4 flex items-center justify-between gap-3">
           <span />
           <nav className="flex items-center gap-3 text-xs text-gray-600">
+            <a className="hover:underline" href="#lessons">Уроки</a>
+            <span className="text-gray-400">/</span>
             <a className="hover:underline" href="#tools">Инструменты</a>
             <span className="text-gray-400">/</span>
             <a className="hover:underline" href="#guides">Гайды</a>
@@ -106,6 +114,21 @@ export default function App() {
             </div>
           </div>
         </Card>
+
+        <section id="lessons" className="space-y-3">
+          <SectionHeading>Уроки</SectionHeading>
+          {moduleKey !== "basics" ? (
+            <Card className="text-sm text-gray-800">Модуль ещё не открыт. Дата открытия: {getModuleOpenDate(moduleKey)}.</Card>
+          ) : (
+            <Card className="py-4">
+              <div className="flex items-start gap-3 overflow-x-auto">
+                {lessons.map((l) => (
+                  <LessonCard key={l.title} title={l.title} time={l.time} onClick={() => { setActiveLesson(l); setLessonOpen(true); }} />
+                ))}
+              </div>
+            </Card>
+          )}
+        </section>
 
         <section id="tools" className="space-y-3">
           <SectionHeading>Инструменты</SectionHeading>
@@ -217,6 +240,13 @@ export default function App() {
             <Button type="button" variant="secondary" onClick={() => setSubmitOpen(false)}>Отмена</Button>
           </div>
         </form>
+      </Modal>
+
+      <Modal open={lessonOpen} onClose={() => { setLessonOpen(false); setActiveLesson(null); }} title={activeLesson?.title || "Урок"}>
+        <div className="space-y-2 text-sm text-gray-800">
+          <p>{activeLesson?.desc}</p>
+          {activeLesson?.time && <div className="text-xs text-gray-500">Время: {activeLesson.time}</div>}
+        </div>
       </Modal>
 
       <Modal open={quickOpen} onClose={() => setQuickOpen(false)} title="Быстрый старт">
