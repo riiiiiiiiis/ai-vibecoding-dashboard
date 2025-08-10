@@ -88,10 +88,36 @@ export default function App() {
 
       <main className="max-w-4xl mx-auto p-6 sm:p-8 space-y-6">
         {/* Заголовок */}
-        <Card>
-          <div className="space-y-3">
-            <H2>ИИ, но проще</H2>
-            <p className="text-sm text-gray-800">Вайбкодить — быстро собирать работающие прототипы: короткие итерации, понятные проверки, минимум декора и максимум пользы.</p>
+        <Card className="animate-fade-in">
+          <header className="flex justify-between items-start border-b border-gray-200 pb-4 mb-6">
+            <div>
+              <H2 className="text-lg">Vibecoding: Создаём первое приложение с AI‑промптами (без кода)</H2>
+              <p className="mt-2 text-xs text-gray-600">Это основа, использованная для генерации полного плана урока.</p>
+            </div>
+          </header>
+          <div className="mb-6">
+            <SectionHeading className="mb-2">Путь студента</SectionHeading>
+            <div className="text-sm text-gray-800">
+              <p className="whitespace-pre-wrap">До урока студент испытывает любопытство и, возможно, опасение перед программированием. Во время урока он шаг за шагом осваивает магию создания приложений через простые текстовые команды, чувствуя себя первооткрывателем. После урока студент будет вдохновлён, уверен в своих силах и готов экспериментировать с созданием собственных AI‑генерируемых проектов.</p>
+            </div>
+          </div>
+          <div className="mb-6">
+            <SectionHeading className="mb-2">Целевая аудитория</SectionHeading>
+            <div className="text-sm text-gray-800">
+              <p>Люди, которые никогда не программировали и не имеют опыта в разработке приложений, но хотят создавать свои проекты.</p>
+            </div>
+          </div>
+          <div className="mb-6">
+            <SectionHeading className="mb-2">Измеримые результаты обучения</SectionHeading>
+            <div className="text-sm text-gray-800">
+              <ul className="list-disc list-outside pl-5 space-y-1">
+                <li>После урока студент сможет объяснить, что такое промпт и как он используется для создания приложений.</li>
+                <li>Сформулировать эффективные промпты для генерации базовой структуры простого веб‑приложения.</li>
+                <li>Использовать выбранный AI‑инструмент для создания скелета приложения без написания кода.</li>
+                <li>Определить основные компоненты простого веб‑приложения (UI, логика, данные).</li>
+                <li>Запустить и проверить работоспособность сгенерированного AI‑приложения.</li>
+              </ul>
+            </div>
           </div>
         </Card>
 
@@ -137,12 +163,9 @@ export default function App() {
           {moduleKey !== "basics" ? (
             <Card className="text-sm text-gray-800">Модуль ещё не открыт. Дата открытия: {getModuleOpenDate(moduleKey)}.</Card>
           ) : (
-            <Card className="space-y-2">
-              {terms.map((t, idx) => (
-                <React.Fragment key={t.title}>
-                  {idx > 0 && <DividerSolid />}
-                  <TermItem title={t.title} desc={t.desc} />
-                </React.Fragment>
+            <Card className="space-y-1">
+              {terms.map((t) => (
+                <TermItem key={t.title} title={t.title} desc={t.desc} />
               ))}
             </Card>
           )}
