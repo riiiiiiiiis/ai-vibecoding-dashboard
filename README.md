@@ -14,4 +14,6 @@ npm run build
 npm run preview
 ```
 
+Документация для ИИ‑агентов: см. `docs/AI_AGENT_RULES.md`.
+
 
