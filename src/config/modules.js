@@ -4,6 +4,12 @@ export const MODULES = [
   { key: "knowledge", name: "База знаний" },
 ];
 
+export function getModuleOpenDate(moduleKey) {
+  if (moduleKey === "prompts") return "20 августа";
+  if (moduleKey === "knowledge") return "27 августа";
+  return null;
+}
+
 export function getGuidesByModule(moduleKey) {
   if (moduleKey === "basics") {
     return [

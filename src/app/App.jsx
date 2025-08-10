@@ -6,7 +6,7 @@ import { Modal } from "../components/ui/Modal.jsx";
 import { GuideItem } from "../features/guides/GuideItem.jsx";
 import { AssignmentItem } from "../features/assignments/AssignmentItem.jsx";
 import { isHttpUrl, isLikelyEmail } from "../utils/validators.js";
-import { MODULES, getGuidesByModule, getAssignmentsByModule, getTestsByModule, getToolsByModule } from "../config/modules.js";
+import { MODULES, getGuidesByModule, getAssignmentsByModule, getTestsByModule, getToolsByModule, getModuleOpenDate } from "../config/modules.js";
 
 export default function App() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -111,7 +111,7 @@ export default function App() {
           <SectionHeading>Инструменты</SectionHeading>
           {moduleKey !== "basics" ? (
             <Card className="text-sm text-gray-800">
-              Модуль ещё не открыт. 2 модуль — 20 августа, 3 модуль — 27 августа.
+              Модуль ещё не открыт. Дата открытия: {getModuleOpenDate(moduleKey)}.
             </Card>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -135,7 +135,7 @@ export default function App() {
         <section id="guides" className="space-y-3">
           <SectionHeading>Гайды</SectionHeading>
           {moduleKey !== "basics" ? (
-            <Card className="text-sm text-gray-800">Модуль ещё не открыт. 2 модуль — 20 августа, 3 модуль — 27 августа.</Card>
+            <Card className="text-sm text-gray-800">Модуль ещё не открыт. Дата открытия: {getModuleOpenDate(moduleKey)}.</Card>
           ) : (
             <Card className="space-y-6">
               {guideItems.map((g, idx) => (
@@ -151,7 +151,7 @@ export default function App() {
         <section id="assignments" className="space-y-3">
           <SectionHeading>Домашние задания</SectionHeading>
           {moduleKey !== "basics" ? (
-            <Card className="text-sm text-gray-800">Модуль ещё не открыт. 2 модуль — 20 августа, 3 модуль — 27 августа.</Card>
+            <Card className="text-sm text-gray-800">Модуль ещё не открыт. Дата открытия: {getModuleOpenDate(moduleKey)}.</Card>
           ) : (
             <Card className="space-y-6">
               {assignmentItems.map((a, idx) => (
@@ -166,33 +166,37 @@ export default function App() {
 
         <section id="tests" className="space-y-3">
           <SectionHeading>Тесты</SectionHeading>
-          <Card className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-800">Тесты по текущему модулю</span>
-              <span className={`text-xs ${allPass ? "text-gray-900" : "text-red-600"}`}>{allPass ? "Пройдены" : "Не пройдены"}</span>
-            </div>
-            <DividerSolid />
-            {tests.map((t, i) => (
-              <details key={i} className="group rounded-md border border-gray-200 bg-white p-3">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm">
-                  <span className="text-gray-800">{t.name}</span>
-                  <span className={`text-xs ${t.pass ? "text-gray-900" : "text-red-600"}`}>{t.pass ? "OK" : "FAIL"}</span>
-                </summary>
-                <div className="mt-2 pl-1 text-sm text-gray-800 space-y-2">
-                  {Array.isArray(t.qa) && t.qa.length > 0 && (
-                    <ul className="list-disc pl-5 space-y-1">
-                      {t.qa.map((item, idx) => (
-                        <li key={idx}>
-                          <span className="font-bold">Вопрос:</span> {item.q}<br />
-                          <span className="font-bold">Ответ:</span> {item.a}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </details>
-            ))}
-          </Card>
+          {moduleKey !== "basics" ? (
+            <Card className="text-sm text-gray-800">Модуль ещё не открыт. Дата открытия: {getModuleOpenDate(moduleKey)}.</Card>
+          ) : (
+            <Card className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-800">Тесты по текущему модулю</span>
+                <span className={`text-xs ${allPass ? "text-gray-900" : "text-red-600"}`}>{allPass ? "Пройдены" : "Не пройдены"}</span>
+              </div>
+              <DividerSolid />
+              {tests.map((t, i) => (
+                <details key={i} className="group rounded-md border border-gray-200 bg-white p-3">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm">
+                    <span className="text-gray-800">{t.name}</span>
+                    <span className={`text-xs ${t.pass ? "text-gray-900" : "text-red-600"}`}>{t.pass ? "OK" : "FAIL"}</span>
+                  </summary>
+                  <div className="mt-2 pl-1 text-sm text-gray-800 space-y-2">
+                    {Array.isArray(t.qa) && t.qa.length > 0 && (
+                      <ul className="list-disc pl-5 space-y-1">
+                        {t.qa.map((item, idx) => (
+                          <li key={idx}>
+                            <span className="font-bold">Вопрос:</span> {item.q}<br />
+                            <span className="font-bold">Ответ:</span> {item.a}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </details>
+              ))}
+            </Card>
+          )}
         </section>
       </main>
 
