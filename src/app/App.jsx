@@ -181,6 +181,13 @@ export default function App() {
               <span className="text-gray-800">Тесты по текущему модулю</span>
               <span className={`text-xs ${allPass ? "text-gray-900" : "text-red-600"}`}>{allPass ? "Пройдены" : "Не пройдены"}</span>
             </div>
+            <DividerSolid />
+            {tests.map((t, i) => (
+              <div key={i} className="flex items-center justify-between text-sm">
+                <span className="text-gray-800">{t.name}</span>
+                <span className={`text-xs ${t.pass ? "text-gray-900" : "text-gray-500"}`}>{t.pass ? "OK" : "FAIL"}</span>
+              </div>
+            ))}
           </Card>
         </section>
       </main>
