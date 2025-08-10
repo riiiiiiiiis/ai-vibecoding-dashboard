@@ -50,11 +50,41 @@ export default function App() {
   }
 
   const tests = useMemo(() => {
-    const results = [];
-    results.push({ name: "AssignmentItem определён", pass: typeof AssignmentItem === "function" });
-    results.push({ name: "URL validator: https ok / ftp fail", pass: isHttpUrl("https://x") && !isHttpUrl("ftp://x") });
-    results.push({ name: "Email эвристика includes", pass: isLikelyEmail("a@b.c") && !isLikelyEmail("bad") });
-    return results;
+    const items = [];
+    items.push({
+      name: "Компонент AssignmentItem",
+      pass: typeof AssignmentItem === "function",
+      qa: [
+        { q: "Что делает AssignmentItem?", a: "Отображает карточку задания: описание, дедлайн, статус и кнопку 'Сдать'." },
+        { q: "Как отправить задание?", a: "Нажмите 'Сдать' — вызывается onSubmit(title), открывается модал отправки." },
+      ],
+    });
+    items.push({
+      name: "Валидатор URL",
+      pass: isHttpUrl("https://x") && !isHttpUrl("ftp://x"),
+      qa: [
+        { q: "Какие URL валидны?", a: "Только http/https (начинаются с http:// или https://)." },
+        { q: "Пример", a: "https://x — валиден; ftp://x — не валиден." },
+      ],
+    });
+    items.push({
+      name: "Эвристика email",
+      pass: isLikelyEmail("a@b.c") && !isLikelyEmail("bad"),
+      qa: [
+        { q: "Что проверяется?", a: "Наличие символов '@' и '.' — это упрощённая эвристика, не строгая валидация." },
+        { q: "Пример", a: "a@b.c — валиден; bad — не валиден." },
+      ],
+    });
+    items.push({
+      name: "Базовые понятия: промпты",
+      pass: true,
+      qa: [
+        { q: "Что такое промпт?", a: "Текстовая инструкция для модели: цель, контекст, формат ответа, ограничения." },
+        { q: "Системный vs пользовательский промпт", a: "Системный задаёт правила/роль; пользовательский — конкретный запрос." },
+        { q: "Что улучшает промпт?", a: "Ясность задачи, конкретные требования к формату, примеры (few‑shot), проверочные критерии." },
+      ],
+    });
+    return items;
   }, []);
   const allPass = tests.every((t) => t.pass);
   const currentModule = "ИИ — основы";
@@ -183,10 +213,24 @@ export default function App() {
             </div>
             <DividerSolid />
             {tests.map((t, i) => (
-              <div key={i} className="flex items-center justify-between text-sm">
-                <span className="text-gray-800">{t.name}</span>
-                <span className={`text-xs ${t.pass ? "text-gray-900" : "text-gray-500"}`}>{t.pass ? "OK" : "FAIL"}</span>
-              </div>
+              <details key={i} className="group rounded-md border border-gray-200 bg-white p-3">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm">
+                  <span className="text-gray-800">{t.name}</span>
+                  <span className={`text-xs ${t.pass ? "text-gray-900" : "text-red-600"}`}>{t.pass ? "OK" : "FAIL"}</span>
+                </summary>
+                <div className="mt-2 pl-1 text-sm text-gray-800 space-y-2">
+                  {Array.isArray(t.qa) && t.qa.length > 0 && (
+                    <ul className="list-disc pl-5 space-y-1">
+                      {t.qa.map((item, idx) => (
+                        <li key={idx}>
+                          <span className="font-bold">Вопрос:</span> {item.q}<br />
+                          <span className="font-bold">Ответ:</span> {item.a}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </details>
             ))}
           </Card>
         </section>
