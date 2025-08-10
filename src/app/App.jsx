@@ -7,9 +7,17 @@ import { GuideItem } from "../features/guides/GuideItem.jsx";
 import { AssignmentItem } from "../features/assignments/AssignmentItem.jsx";
 import { isHttpUrl, isLikelyEmail } from "../utils/validators.js";
 
+const MODULES = [
+  { key: "basics", name: "ИИ — основы" },
+  { key: "prompts", name: "Консоль промптов" },
+  { key: "knowledge", name: "База знаний" },
+];
+
 export default function App() {
   const [modalOpen, setModalOpen] = useState(false);
   const [quickOpen, setQuickOpen] = useState(false);
+  const [moduleKey, setModuleKey] = useState("basics");
+  const currentModule = useMemo(() => MODULES.find((m) => m.key === moduleKey), [moduleKey]);
 
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState(null);
@@ -50,44 +58,134 @@ export default function App() {
   }
 
   const tests = useMemo(() => {
-    const items = [];
-    items.push({
-      name: "Компонент AssignmentItem",
-      pass: typeof AssignmentItem === "function",
-      qa: [
-        { q: "Что делает AssignmentItem?", a: "Отображает карточку задания: описание, дедлайн, статус и кнопку 'Сдать'." },
-        { q: "Как отправить задание?", a: "Нажмите 'Сдать' — вызывается onSubmit(title), открывается модал отправки." },
-      ],
-    });
-    items.push({
-      name: "Валидатор URL",
-      pass: isHttpUrl("https://x") && !isHttpUrl("ftp://x"),
-      qa: [
-        { q: "Какие URL валидны?", a: "Только http/https (начинаются с http:// или https://)." },
-        { q: "Пример", a: "https://x — валиден; ftp://x — не валиден." },
-      ],
-    });
-    items.push({
-      name: "Эвристика email",
-      pass: isLikelyEmail("a@b.c") && !isLikelyEmail("bad"),
-      qa: [
-        { q: "Что проверяется?", a: "Наличие символов '@' и '.' — это упрощённая эвристика, не строгая валидация." },
-        { q: "Пример", a: "a@b.c — валиден; bad — не валиден." },
-      ],
-    });
-    items.push({
-      name: "Базовые понятия: промпты",
-      pass: true,
-      qa: [
-        { q: "Что такое промпт?", a: "Текстовая инструкция для модели: цель, контекст, формат ответа, ограничения." },
-        { q: "Системный vs пользовательский промпт", a: "Системный задаёт правила/роль; пользовательский — конкретный запрос." },
-        { q: "Что улучшает промпт?", a: "Ясность задачи, конкретные требования к формату, примеры (few‑shot), проверочные критерии." },
-      ],
-    });
-    return items;
-  }, []);
+    if (moduleKey === "basics") {
+      return [
+        {
+          name: "Компонент AssignmentItem",
+          pass: typeof AssignmentItem === "function",
+          qa: [
+            { q: "Что делает AssignmentItem?", a: "Отображает карточку задания: описание, дедлайн, статус и кнопку 'Сдать'." },
+            { q: "Как отправить задание?", a: "Нажмите 'Сдать' — вызывается onSubmit(title), открывается модал отправки." },
+          ],
+        },
+        {
+          name: "Валидатор URL",
+          pass: isHttpUrl("https://x") && !isHttpUrl("ftp://x"),
+          qa: [
+            { q: "Какие URL валидны?", a: "Только http/https (начинаются с http:// или https://)." },
+            { q: "Пример", a: "https://x — валиден; ftp://x — не валиден." },
+          ],
+        },
+        {
+          name: "Эвристика email",
+          pass: isLikelyEmail("a@b.c") && !isLikelyEmail("bad"),
+          qa: [
+            { q: "Что проверяется?", a: "Наличие символов '@' и '.' — это упрощённая эвристика, не строгая валидация." },
+            { q: "Пример", a: "a@b.c — валиден; bad — не валиден." },
+          ],
+        },
+      ];
+    }
+    if (moduleKey === "prompts") {
+      return [
+        {
+          name: "Базовые понятия: промпты",
+          pass: true,
+          qa: [
+            { q: "Что такое промпт?", a: "Текстовая инструкция для модели: цель, контекст, формат ответа, ограничения." },
+            { q: "Системный vs пользовательский промпт", a: "Системный задаёт правила/роль; пользовательский — конкретный запрос." },
+            { q: "Что улучшает промпт?", a: "Ясность задачи, требования к формату, few‑shot примеры, критерии проверки." },
+          ],
+        },
+        {
+          name: "Шаблоны промптов",
+          pass: true,
+          qa: [
+            { q: "Структура", a: "Роль → Контекст → Задача → Формат ответа → Ограничения → Критерии." },
+            { q: "Пример", a: "'Ты редактор. Выровняй стиль текста, верни Markdown, без лишних комментариев.'" },
+          ],
+        },
+        {
+          name: "A/B тестирование подсказок",
+          pass: true,
+          qa: [
+            { q: "Как сравнивать?", a: "Фиксируйте входные данные и критерии; меняйте один параметр за раз." },
+            { q: "Метрики", a: "Согласованность формата, полнота ответа, субъективное качество, длина, время." },
+          ],
+        },
+      ];
+    }
+    // knowledge
+    return [
+      {
+        name: "Импорт источников",
+        pass: true,
+        qa: [
+          { q: "Что поддерживается?", a: "PDF, Markdown, текстовые фрагменты. Индексация по разделам." },
+          { q: "Как цитировать?", a: "Храните ссылку на оригинал и якорь страницы/позиции." },
+        ],
+      },
+      {
+        name: "Поиск и фильтры",
+        pass: true,
+        qa: [
+          { q: "Поиск по источникам", a: "Ограничивайте контекст релевантными документами и секциями." },
+          { q: "Качество ответа", a: "Показывайте цитаты и источники, избегайте галлюцинаций." },
+        ],
+      },
+      {
+        name: "Проверка ссылок",
+        pass: isHttpUrl("https://x") && !isHttpUrl("ftp://x"),
+        qa: [
+          { q: "Требования к ссылкам", a: "Только http/https; проверяйте доступность и формат." },
+          { q: "Пример", a: "https://example.com — ок; ftp://example.com — нет." },
+        ],
+      },
+    ];
+  }, [moduleKey]);
   const allPass = tests.every((t) => t.pass);
-  const currentModule = "ИИ — основы";
+
+  const guideItems = useMemo(() => {
+    if (moduleKey === "basics") {
+      return [
+        { title: "Дневной отчёт из 300 сообщений", desc: "Как собирать данные из Telegram/Discord, резюмировать и отправлять дайджест в канал.", time: "7 мин" },
+        { title: "Консоль промптов: быстрые тесты", desc: "Структуры промптов, фиксация контекста, быстрые A/B проверки ответов.", time: "5 мин" },
+        { title: "База знаний без боли", desc: "Загрузка PDF/Markdown, извлечение цитат, ссылки на источники, экспорт результатов.", time: "9 мин" },
+      ];
+    }
+    if (moduleKey === "prompts") {
+      return [
+        { title: "Шаблоны промптов", desc: "Роль → Контекст → Задача → Формат → Ограничения → Критерии.", time: "6 мин" },
+        { title: "A/B тесты подсказок", desc: "Сравнение вариантов при фиксированном вводе и метриках.", time: "4 мин" },
+        { title: "Few‑shot примеры", desc: "Как подбирать и сокращать примеры для лучшего качества.", time: "5 мин" },
+      ];
+    }
+    return [
+      { title: "Импорт PDF/MD", desc: "Стратегии парсинга, нормализация и сегментация.", time: "6 мин" },
+      { title: "Поиск по источникам", desc: "Ограничение контекста релевантными документами.", time: "5 мин" },
+      { title: "Цитирование", desc: "Ссылки, страницы, якоря; экспорт результатов.", time: "5 мин" },
+    ];
+  }, [moduleKey]);
+
+  const assignmentItems = useMemo(() => {
+    if (moduleKey === "basics") {
+      return [
+        { title: "ДЗ #1 — Мини-консоль промптов", desc: "Страница с полем ввода и кнопкой 'Run'. Добавьте 3 пресета.", due: "2025‑08‑17", status: "Открыто" },
+        { title: "ДЗ #2 — Дневной отчёт", desc: "Сводка из 300 сообщений: парсинг → очистка → резюме → Markdown.", due: "2025‑08‑24", status: "Открыто" },
+        { title: "ДЗ #3 — База знаний", desc: "Импорт PDF+MD, поиск по источникам, цитаты со ссылками.", due: "2025‑08‑31", status: "Скоро" },
+      ];
+    }
+    if (moduleKey === "prompts") {
+      return [
+        { title: "ДЗ #1 — Шаблон промпта", desc: "Соберите шаблон с ролью, форматом ответа и критериями.", due: "2025‑08‑18", status: "Открыто" },
+        { title: "ДЗ #2 — A/B тест", desc: "Сравните 2 версии подсказки на одном датасете.", due: "2025‑08‑25", status: "Открыто" },
+      ];
+    }
+    return [
+      { title: "ДЗ #1 — Импорт источников", desc: "Загрузите 2 PDF и 1 MD, выделите 5 цитат.", due: "2025‑08‑19", status: "Открыто" },
+      { title: "ДЗ #2 — Поиск", desc: "Настройте поиск по источникам и покажите 3 ответа с цитатами.", due: "2025‑08‑26", status: "Открыто" },
+    ];
+  }, [moduleKey]);
 
   return (
     <div
@@ -120,14 +218,7 @@ export default function App() {
       </header>
 
       <main className="max-w-4xl mx-auto p-6 sm:p-8 space-y-6">
-        {/* Текущий модуль */}
-        <Card className="py-3">
-          <div className="text-sm">
-            <span className="text-gray-500">Текущий модуль: </span>
-            <span className="font-bold text-black">{currentModule}</span>
-          </div>
-        </Card>
-
+        {/* Заголовок */}
         <Card>
           <div className="space-y-3">
             <H2>ИИ, но проще</H2>
@@ -135,6 +226,28 @@ export default function App() {
             <div className="flex items-center gap-3 pt-2">
               <Button onClick={openConsole}>Открыть консоль</Button>
               <Button variant="secondary">Документация</Button>
+            </div>
+          </div>
+        </Card>
+
+        {/* Текущий модуль и переключение */}
+        <Card className="py-3">
+          <div className="flex flex-col gap-2">
+            <div className="text-sm">
+              <span className="text-gray-500">Текущий модуль: </span>
+              <span className="font-bold text-black">{currentModule?.name}</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {MODULES.map((m) => (
+                <Button
+                  key={m.key}
+                  variant={m.key === moduleKey ? "primary" : "secondary"}
+                  onClick={() => setModuleKey(m.key)}
+                  aria-pressed={m.key === moduleKey}
+                >
+                  {m.name}
+                </Button>
+              ))}
             </div>
           </div>
         </Card>
@@ -185,22 +298,24 @@ export default function App() {
         <section id="guides" className="space-y-3">
           <SectionHeading>Гайды</SectionHeading>
           <Card className="space-y-6">
-            <GuideItem title="Дневной отчёт из 300 сообщений" desc="Как собирать данные из Telegram/Discord, резюмировать и отправлять дайджест в канал." time="7 мин" />
-            <DividerSolid />
-            <GuideItem title="Консоль промптов: быстрые тесты" desc="Структуры промптов, фиксация контекста, быстрые A/B проверки ответов." time="5 мин" />
-            <DividerSolid />
-            <GuideItem title="База знаний без боли" desc="Загрузка PDF/Markdown, извлечение цитат, ссылки на источники, экспорт результатов." time="9 мин" />
+            {guideItems.map((g, idx) => (
+              <React.Fragment key={g.title}>
+                {idx > 0 && <DividerSolid />}
+                <GuideItem title={g.title} desc={g.desc} time={g.time} />
+              </React.Fragment>
+            ))}
           </Card>
         </section>
 
         <section id="assignments" className="space-y-3">
           <SectionHeading>Домашние задания</SectionHeading>
           <Card className="space-y-6">
-            <AssignmentItem title="ДЗ #1 — Мини-консоль промптов" desc="Соберите простую страницу с полем ввода и кнопкой 'Run'. Добавьте пресет на 3 промпта." due="2025‑08‑17" status="Открыто" onSubmit={openSubmit} />
-            <DividerSolid />
-            <AssignmentItem title="ДЗ #2 — Дневной отчёт" desc="Склеить 300 сообщений в сводку: парсинг → очистка → резюме → Markdown." due="2025‑08‑24" status="Открыто" onSubmit={openSubmit} />
-            <DividerSolid />
-            <AssignmentItem title="ДЗ #3 — База знаний" desc="Импорт PDF+MD, поиск по источникам, список цитат с ссылками." due="2025‑08‑31" status="Скоро" onSubmit={openSubmit} />
+            {assignmentItems.map((a, idx) => (
+              <React.Fragment key={a.title}>
+                {idx > 0 && <DividerSolid />}
+                <AssignmentItem title={a.title} desc={a.desc} due={a.due} status={a.status} onSubmit={openSubmit} />
+              </React.Fragment>
+            ))}
           </Card>
         </section>
 
