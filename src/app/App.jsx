@@ -6,7 +6,7 @@ import { Modal } from "../components/ui/Modal.jsx";
 import { GuideItem } from "../features/guides/GuideItem.jsx";
 import { AssignmentItem } from "../features/assignments/AssignmentItem.jsx";
 import { isHttpUrl, isLikelyEmail } from "../utils/validators.js";
-import { MODULES, getGuidesByModule, getAssignmentsByModule, getTestsByModule } from "../config/modules.js";
+import { MODULES, getGuidesByModule, getAssignmentsByModule, getTestsByModule, getToolsByModule } from "../config/modules.js";
 
 export default function App() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -64,7 +64,7 @@ export default function App() {
 
       <header className="border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-6 sm:px-8 py-4 flex items-center justify-between gap-3">
-          <a href="#" className="text-sm font-bold text-black tracking-tight">AI MONO</a>
+          <span />
           <nav className="flex items-center gap-3 text-xs text-gray-600">
             <a className="hover:underline" href="#tools">Инструменты</a>
             <span className="text-gray-400">/</span>
@@ -72,10 +72,7 @@ export default function App() {
             <span className="text-gray-400">/</span>
             <a className="hover:underline" href="#assignments">Домашние</a>
           </nav>
-          <div className="flex items-center gap-2">
-            <Button variant="icon" aria-label="Справка" title="Справка" onClick={() => setModalOpen(true)}>?</Button>
-            <Button onClick={() => setQuickOpen(true)}>Начать</Button>
-          </div>
+          <div className="flex items-center gap-2" />
         </div>
       </header>
 
@@ -84,11 +81,7 @@ export default function App() {
         <Card>
           <div className="space-y-3">
             <H2>ИИ, но проще</H2>
-            <p className="text-sm text-gray-800">Чёткие инструменты и понятные гайды без визуального шума. Только то, что помогает запускать и проверять идеи быстрее.</p>
-            <div className="flex items-center gap-3 pt-2">
-              <Button onClick={openConsole}>Открыть консоль</Button>
-              <Button variant="secondary">Документация</Button>
-            </div>
+            <p className="text-sm text-gray-800">Вайбкодить — быстро собирать работающие прототипы: короткие итерации, понятные проверки, минимум декора и максимум пользы.</p>
           </div>
         </Card>
 
@@ -116,69 +109,59 @@ export default function App() {
 
         <section id="tools" className="space-y-3">
           <SectionHeading>Инструменты</SectionHeading>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Card>
-              <H3>Суммаризатор</H3>
-              <p className="mt-2 text-sm text-gray-800">Готовит краткие отчёты из длинных тредов и лент. Понимает разметку, теги и временные метки.</p>
-              <div className="mt-4 flex items-center gap-2">
-                <Button variant="secondary">Открыть</Button>
-                <LinkA href="#" className="text-xs">Как это работает</LinkA>
-              </div>
+          {moduleKey !== "basics" ? (
+            <Card className="text-sm text-gray-800">
+              Модуль ещё не открыт. 2 модуль — 20 августа, 3 модуль — 27 августа.
             </Card>
-
-            <Card id="console-card">
-              <H3>Консоль запросов</H3>
-              <p className="mt-2 text-sm text-gray-800">Тестируйте промпты и подсказки. Сохраняйте пресеты. Экспортируйте ответы в Markdown.</p>
-              <div className="mt-4 flex items-center gap-2">
-                <Button variant="secondary">Открыть</Button>
-                <LinkA href="#" className="text-xs">Гид</LinkA>
-              </div>
-            </Card>
-
-            <Card>
-              <H3>База знаний</H3>
-              <p className="mt-2 text-sm text-gray-800">Индексируйте документы, выбирайте источники, настраивайте цитирование. Всё в одном месте.</p>
-              <div className="mt-4 flex items-center gap-2">
-                <Button variant="secondary">Открыть</Button>
-                <LinkA href="#" className="text-xs">Примеры</LinkA>
-              </div>
-            </Card>
-
-            <Card>
-              <H3>Автопроцессы</H3>
-              <p className="mt-2 text-sm text-gray-800">Планируйте задачи и пайплайны: парсинг → очистка → анализ → отчёт. Запуски по расписанию.</p>
-              <div className="mt-4 flex items-center gap-2">
-                <Button variant="secondary">Открыть</Button>
-                <LinkA href="#" className="text-xs">Сценарии</LinkA>
-              </div>
-            </Card>
-          </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {getToolsByModule(moduleKey).map((t) => (
+                <Card key={t.title} id="console-card">
+                  <H3>{t.title}</H3>
+                  <p className="mt-2 text-sm text-gray-800">{t.desc}</p>
+                  <div className="mt-4 flex items-center gap-2">
+                    <a href={t.href} target="_blank" rel="noopener noreferrer">
+                      <Button variant="secondary">Открыть</Button>
+                    </a>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
         </section>
 
         <DividerDashed />
 
         <section id="guides" className="space-y-3">
           <SectionHeading>Гайды</SectionHeading>
-          <Card className="space-y-6">
-            {guideItems.map((g, idx) => (
-              <React.Fragment key={g.title}>
-                {idx > 0 && <DividerSolid />}
-                <GuideItem title={g.title} desc={g.desc} time={g.time} />
-              </React.Fragment>
-            ))}
-          </Card>
+          {moduleKey !== "basics" ? (
+            <Card className="text-sm text-gray-800">Модуль ещё не открыт. 2 модуль — 20 августа, 3 модуль — 27 августа.</Card>
+          ) : (
+            <Card className="space-y-6">
+              {guideItems.map((g, idx) => (
+                <React.Fragment key={g.title}>
+                  {idx > 0 && <DividerSolid />}
+                  <GuideItem title={g.title} desc={g.desc} time={g.time} />
+                </React.Fragment>
+              ))}
+            </Card>
+          )}
         </section>
 
         <section id="assignments" className="space-y-3">
           <SectionHeading>Домашние задания</SectionHeading>
-          <Card className="space-y-6">
-            {assignmentItems.map((a, idx) => (
-              <React.Fragment key={a.title}>
-                {idx > 0 && <DividerSolid />}
-                <AssignmentItem title={a.title} desc={a.desc} due={a.due} status={a.status} onSubmit={openSubmit} />
-              </React.Fragment>
-            ))}
-          </Card>
+          {moduleKey !== "basics" ? (
+            <Card className="text-sm text-gray-800">Модуль ещё не открыт. 2 модуль — 20 августа, 3 модуль — 27 августа.</Card>
+          ) : (
+            <Card className="space-y-6">
+              {assignmentItems.map((a, idx) => (
+                <React.Fragment key={a.title}>
+                  {idx > 0 && <DividerSolid />}
+                  <AssignmentItem title={a.title} desc={a.desc} due={a.due} status={a.status} onSubmit={openSubmit} />
+                </React.Fragment>
+              ))}
+            </Card>
+          )}
         </section>
 
         <section id="tests" className="space-y-3">

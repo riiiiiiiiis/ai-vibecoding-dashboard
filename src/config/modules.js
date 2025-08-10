@@ -133,4 +133,17 @@ export function getTestsByModule(moduleKey, deps) {
   ];
 }
 
+export function getToolsByModule(moduleKey) {
+  if (moduleKey === "basics") {
+    return [
+      {
+        title: "Генератор промптов",
+        desc: "Онлайн‑инструмент для генерации идей/подсказок.",
+        href: "https://ai-idea-gen.vercel.app/",
+      },
+    ];
+  }
+  return [];
+}
+
 
