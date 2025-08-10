@@ -1,5 +1,5 @@
 import React from "react";
-import { Badge, LinkA } from "../../components/ui/Primitives.jsx";
+import { Badge } from "../../components/ui/Primitives.jsx";
 import { Button } from "../../components/ui/Forms.jsx";
 
 export const AssignmentItem = ({ title, desc, due, status, onSubmit }) => (
@@ -10,7 +10,6 @@ export const AssignmentItem = ({ title, desc, due, status, onSubmit }) => (
       <div className="mt-2 flex items-center gap-2 text-xs text-gray-600">
         <Badge>{status}</Badge>
         <span>Сдать до: {due}</span>
-        <LinkA href="#" className="text-xs">Скачать шаблон</LinkA>
       </div>
     </div>
     <div className="flex gap-2">
