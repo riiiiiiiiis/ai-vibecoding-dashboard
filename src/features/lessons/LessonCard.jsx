@@ -4,12 +4,12 @@ export const LessonCard = ({ title, time, onClick }) => (
   <button
     type="button"
     onClick={onClick}
-    className="group flex flex-col items-center w-24 shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-black/70 rounded"
+    className="group w-40 shrink-0 text-left outline-none focus-visible:ring-2 focus-visible:ring-black/70 rounded-md"
     aria-label={`Открыть урок: ${title}`}
   >
-    <div className="w-20 h-20 rounded-full border border-gray-200 bg-gradient-to-br from-gray-50 to-gray-100 group-hover:from-gray-100 group-hover:to-gray-200 flex items-center justify-center text-center p-2">
-      <span className="text-[10px] font-bold text-gray-900 leading-tight break-words">{title}</span>
+    <div className="h-52 border border-gray-200 rounded-md bg-white p-3 flex flex-col justify-between group-hover:bg-gray-50">
+      <div className="text-sm font-bold text-gray-900 leading-snug break-words">{title}</div>
+      <div className="text-xs text-gray-600">{time}</div>
     </div>
-    <div className="mt-2 text-[10px] text-gray-600">{time}</div>
   </button>
 );

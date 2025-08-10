@@ -120,13 +120,13 @@ export default function App() {
           {moduleKey !== "basics" ? (
             <Card className="text-sm text-gray-800">Модуль ещё не открыт. Дата открытия: {getModuleOpenDate(moduleKey)}.</Card>
           ) : (
-            <Card className="py-4">
-              <div className="flex items-start gap-3 overflow-x-auto">
+            <div className="py-2">
+              <div className="flex items-stretch gap-3 overflow-x-auto">
                 {lessons.map((l) => (
                   <LessonCard key={l.title} title={l.title} time={l.time} onClick={() => { setActiveLesson(l); setLessonOpen(true); }} />
                 ))}
               </div>
-            </Card>
+            </div>
           )}
         </section>
 
