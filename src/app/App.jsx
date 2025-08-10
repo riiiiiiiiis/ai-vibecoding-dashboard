@@ -56,6 +56,8 @@ export default function App() {
     results.push({ name: "Email эвристика includes", pass: isLikelyEmail("a@b.c") && !isLikelyEmail("bad") });
     return results;
   }, []);
+  const allPass = tests.every((t) => t.pass);
+  const currentModule = "ИИ — основы";
 
   return (
     <div
@@ -79,8 +81,6 @@ export default function App() {
             <a className="hover:underline" href="#guides">Гайды</a>
             <span className="text-gray-400">/</span>
             <a className="hover:underline" href="#assignments">Домашние</a>
-            <span className="text-gray-400">/</span>
-            <a className="hover:underline" href="#updates">Обновления</a>
           </nav>
           <div className="flex items-center gap-2">
             <Button variant="icon" aria-label="Справка" title="Справка" onClick={() => setModalOpen(true)}>?</Button>
@@ -90,6 +90,14 @@ export default function App() {
       </header>
 
       <main className="max-w-4xl mx-auto p-6 sm:p-8 space-y-6">
+        {/* Текущий модуль */}
+        <Card className="py-3">
+          <div className="text-sm">
+            <span className="text-gray-500">Текущий модуль: </span>
+            <span className="font-bold text-black">{currentModule}</span>
+          </div>
+        </Card>
+
         <Card>
           <div className="space-y-3">
             <H2>ИИ, но проще</H2>
@@ -166,32 +174,13 @@ export default function App() {
           </Card>
         </section>
 
-        <section id="updates" className="space-y-3">
-          <SectionHeading>Обновления</SectionHeading>
-          <Card>
-            <H3>Подписаться на апдейты</H3>
-            <p className="mt-2 text-sm text-gray-800">Редкие письма: релизы, гайды, примеры использования.</p>
-
-            {emailError && <div className="mt-4 bg-red-50 border border-red-200 text-red-800 p-3 rounded-md text-sm">{emailError}</div>}
-
-            <form onSubmit={subscribe} className="mt-4 flex flex-col sm:flex-row gap-3">
-              <Input type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} aria-invalid={!!emailError} />
-              <Button type="submit" disabled={!email || !isValidEmail}>Подписаться</Button>
-            </form>
-            <p className="mt-2 text-xs text-gray-500">Можно отписаться в один клик. Никакого спама.</p>
-          </Card>
-        </section>
-
         <section id="tests" className="space-y-3">
           <SectionHeading>Тесты</SectionHeading>
           <Card className="space-y-2">
-            {tests.map((t, i) => (
-              <div key={i} className="flex items-center justify-between text-sm">
-                <span className="text-gray-800">{t.name}</span>
-                <span className={`text-xs ${t.pass ? "text-gray-900" : "text-gray-500"}`}>{t.pass ? "OK" : "FAIL"}</span>
-              </div>
-            ))}
-            <p className="text-xs text-gray-500">Если что-то падает — скажи, какой ожидаемый результат, поправлю логику.</p>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-800">Тесты по текущему модулю</span>
+              <span className={`text-xs ${allPass ? "text-gray-900" : "text-red-600"}`}>{allPass ? "Пройдены" : "Не пройдены"}</span>
+            </div>
           </Card>
         </section>
       </main>
