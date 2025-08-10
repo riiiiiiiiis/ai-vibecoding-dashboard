@@ -6,12 +6,7 @@ import { Modal } from "../components/ui/Modal.jsx";
 import { GuideItem } from "../features/guides/GuideItem.jsx";
 import { AssignmentItem } from "../features/assignments/AssignmentItem.jsx";
 import { isHttpUrl, isLikelyEmail } from "../utils/validators.js";
-
-const MODULES = [
-  { key: "basics", name: "ИИ — основы" },
-  { key: "prompts", name: "Консоль промптов" },
-  { key: "knowledge", name: "База знаний" },
-];
+import { MODULES, getGuidesByModule, getAssignmentsByModule, getTestsByModule } from "../config/modules.js";
 
 export default function App() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -57,148 +52,15 @@ export default function App() {
     setSubmitOpen(false);
   }
 
-  const tests = useMemo(() => {
-    if (moduleKey === "basics") {
-      return [
-        {
-          name: "Компонент AssignmentItem",
-          pass: typeof AssignmentItem === "function",
-          qa: [
-            { q: "Что делает AssignmentItem?", a: "Отображает карточку задания: описание, дедлайн, статус и кнопку 'Сдать'." },
-            { q: "Как отправить задание?", a: "Нажмите 'Сдать' — вызывается onSubmit(title), открывается модал отправки." },
-          ],
-        },
-        {
-          name: "Валидатор URL",
-          pass: isHttpUrl("https://x") && !isHttpUrl("ftp://x"),
-          qa: [
-            { q: "Какие URL валидны?", a: "Только http/https (начинаются с http:// или https://)." },
-            { q: "Пример", a: "https://x — валиден; ftp://x — не валиден." },
-          ],
-        },
-        {
-          name: "Эвристика email",
-          pass: isLikelyEmail("a@b.c") && !isLikelyEmail("bad"),
-          qa: [
-            { q: "Что проверяется?", a: "Наличие символов '@' и '.' — это упрощённая эвристика, не строгая валидация." },
-            { q: "Пример", a: "a@b.c — валиден; bad — не валиден." },
-          ],
-        },
-      ];
-    }
-    if (moduleKey === "prompts") {
-      return [
-        {
-          name: "Базовые понятия: промпты",
-          pass: true,
-          qa: [
-            { q: "Что такое промпт?", a: "Текстовая инструкция для модели: цель, контекст, формат ответа, ограничения." },
-            { q: "Системный vs пользовательский промпт", a: "Системный задаёт правила/роль; пользовательский — конкретный запрос." },
-            { q: "Что улучшает промпт?", a: "Ясность задачи, требования к формату, few‑shot примеры, критерии проверки." },
-          ],
-        },
-        {
-          name: "Шаблоны промптов",
-          pass: true,
-          qa: [
-            { q: "Структура", a: "Роль → Контекст → Задача → Формат ответа → Ограничения → Критерии." },
-            { q: "Пример", a: "'Ты редактор. Выровняй стиль текста, верни Markdown, без лишних комментариев.'" },
-          ],
-        },
-        {
-          name: "A/B тестирование подсказок",
-          pass: true,
-          qa: [
-            { q: "Как сравнивать?", a: "Фиксируйте входные данные и критерии; меняйте один параметр за раз." },
-            { q: "Метрики", a: "Согласованность формата, полнота ответа, субъективное качество, длина, время." },
-          ],
-        },
-      ];
-    }
-    // knowledge
-    return [
-      {
-        name: "Импорт источников",
-        pass: true,
-        qa: [
-          { q: "Что поддерживается?", a: "PDF, Markdown, текстовые фрагменты. Индексация по разделам." },
-          { q: "Как цитировать?", a: "Храните ссылку на оригинал и якорь страницы/позиции." },
-        ],
-      },
-      {
-        name: "Поиск и фильтры",
-        pass: true,
-        qa: [
-          { q: "Поиск по источникам", a: "Ограничивайте контекст релевантными документами и секциями." },
-          { q: "Качество ответа", a: "Показывайте цитаты и источники, избегайте галлюцинаций." },
-        ],
-      },
-      {
-        name: "Проверка ссылок",
-        pass: isHttpUrl("https://x") && !isHttpUrl("ftp://x"),
-        qa: [
-          { q: "Требования к ссылкам", a: "Только http/https; проверяйте доступность и формат." },
-          { q: "Пример", a: "https://example.com — ок; ftp://example.com — нет." },
-        ],
-      },
-    ];
-  }, [moduleKey]);
+  const tests = useMemo(() => getTestsByModule(moduleKey, { AssignmentItem, isHttpUrl, isLikelyEmail }), [moduleKey]);
   const allPass = tests.every((t) => t.pass);
 
-  const guideItems = useMemo(() => {
-    if (moduleKey === "basics") {
-      return [
-        { title: "Дневной отчёт из 300 сообщений", desc: "Как собирать данные из Telegram/Discord, резюмировать и отправлять дайджест в канал.", time: "7 мин" },
-        { title: "Консоль промптов: быстрые тесты", desc: "Структуры промптов, фиксация контекста, быстрые A/B проверки ответов.", time: "5 мин" },
-        { title: "База знаний без боли", desc: "Загрузка PDF/Markdown, извлечение цитат, ссылки на источники, экспорт результатов.", time: "9 мин" },
-      ];
-    }
-    if (moduleKey === "prompts") {
-      return [
-        { title: "Шаблоны промптов", desc: "Роль → Контекст → Задача → Формат → Ограничения → Критерии.", time: "6 мин" },
-        { title: "A/B тесты подсказок", desc: "Сравнение вариантов при фиксированном вводе и метриках.", time: "4 мин" },
-        { title: "Few‑shot примеры", desc: "Как подбирать и сокращать примеры для лучшего качества.", time: "5 мин" },
-      ];
-    }
-    return [
-      { title: "Импорт PDF/MD", desc: "Стратегии парсинга, нормализация и сегментация.", time: "6 мин" },
-      { title: "Поиск по источникам", desc: "Ограничение контекста релевантными документами.", time: "5 мин" },
-      { title: "Цитирование", desc: "Ссылки, страницы, якоря; экспорт результатов.", time: "5 мин" },
-    ];
-  }, [moduleKey]);
+  const guideItems = useMemo(() => getGuidesByModule(moduleKey), [moduleKey]);
 
-  const assignmentItems = useMemo(() => {
-    if (moduleKey === "basics") {
-      return [
-        { title: "ДЗ #1 — Мини-консоль промптов", desc: "Страница с полем ввода и кнопкой 'Run'. Добавьте 3 пресета.", due: "2025‑08‑17", status: "Открыто" },
-        { title: "ДЗ #2 — Дневной отчёт", desc: "Сводка из 300 сообщений: парсинг → очистка → резюме → Markdown.", due: "2025‑08‑24", status: "Открыто" },
-        { title: "ДЗ #3 — База знаний", desc: "Импорт PDF+MD, поиск по источникам, цитаты со ссылками.", due: "2025‑08‑31", status: "Скоро" },
-      ];
-    }
-    if (moduleKey === "prompts") {
-      return [
-        { title: "ДЗ #1 — Шаблон промпта", desc: "Соберите шаблон с ролью, форматом ответа и критериями.", due: "2025‑08‑18", status: "Открыто" },
-        { title: "ДЗ #2 — A/B тест", desc: "Сравните 2 версии подсказки на одном датасете.", due: "2025‑08‑25", status: "Открыто" },
-      ];
-    }
-    return [
-      { title: "ДЗ #1 — Импорт источников", desc: "Загрузите 2 PDF и 1 MD, выделите 5 цитат.", due: "2025‑08‑19", status: "Открыто" },
-      { title: "ДЗ #2 — Поиск", desc: "Настройте поиск по источникам и покажите 3 ответа с цитатами.", due: "2025‑08‑26", status: "Открыто" },
-    ];
-  }, [moduleKey]);
+  const assignmentItems = useMemo(() => getAssignmentsByModule(moduleKey), [moduleKey]);
 
   return (
-    <div
-      className="min-h-screen bg-gray-100 text-gray-900 font-mono"
-      style={{ fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace" }}
-    >
-      <style>{`
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
-.accent-link { color: #4b5563; text-decoration: none; }
-.accent-link:visited { color: #4b5563; }
-.accent-link:hover { color: #111827; text-decoration: underline; text-decoration-color: #111827; }
-.accent-link:focus-visible { outline: 2px solid #111; outline-offset: 2px; }
-`}</style>
+    <div className="min-h-screen bg-gray-100 text-gray-900 font-mono">
 
       <header className="border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-6 sm:px-8 py-4 flex items-center justify-between gap-3">
